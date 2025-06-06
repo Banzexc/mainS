@@ -1,0 +1,192 @@
+Library = loadstring(Game:HttpGet("https://raw.githubusercontent.com/bloodball/-back-ups-for-libs/main/wizard"))()
+
+local MainWindow = Library:NewWindow("GGZXC")
+
+local MainCheats = MainWindow:NewSection("PLAYERCONFIGURATION🧩")
+
+local MiscCheats = MainWindow:NewSection("Misc🌐")
+
+MainCheats:CreateToggle("Inf Stamina", function(value)
+                  require(game.ReplicatedStorage.Systems.Character.Game.Sprinting).StaminaLossDisabled = true
+print(value)
+end)
+
+MainCheats:CreateButton("Fullbright", function()
+            local Lighting = game:GetService("Lighting")
+
+Lighting.Ambient = Color3.fromRGB(255, 255, 255)
+Lighting.OutdoorAmbient = Color3.fromRGB(255, 255, 255)
+Lighting.Brightness = 2
+Lighting.ShadowSoftness = 0
+Lighting.GlobalShadows = false
+print("HI")
+end)
+
+MiscCheats:CreateToggle("Esp", function(value)
+              local Players = game.Workspace.Players
+local RunService = game:GetService("RunService")
+
+local screenGui = Instance.new("ScreenGui")
+screenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+
+local killersLabel = Instance.new("TextLabel")
+killersLabel.Size = UDim2.new(0, 200, 0, 50)
+killersLabel.Position = UDim2.new(0, 10, 0, 10)
+killersLabel.BackgroundColor3 = Color3.new(1, 0, 0)
+killersLabel.TextColor3 = Color3.new(1, 1, 1)
+killersLabel.TextScaled = true
+killersLabel.Parent = screenGui
+
+local survivorsLabel = Instance.new("TextLabel")
+survivorsLabel.Size = UDim2.new(0, 200, 0, 50)
+survivorsLabel.Position = UDim2.new(0, 10, 0, 70)
+survivorsLabel.BackgroundColor3 = Color3.new(0, 1, 0)
+survivorsLabel.TextColor3 = Color3.new(1, 1, 1) 
+survivorsLabel.TextScaled = true
+survivorsLabel.Parent = screenGui
+
+local function createOutlineESP(model, outlineColor, fillColor)
+    local highlight = Instance.new("Highlight")
+    highlight.Parent = model
+    highlight.Adornee = model
+    highlight.FillTransparency = 0.75
+    highlight.FillColor = fillColor
+    highlight.OutlineColor = outlineColor
+    highlight.OutlineTransparency = 0 
+end
+
+local function createOutlineESPForGroup(group, outlineColor, fillColor)
+    if group then
+        for _, obj in pairs(group:GetChildren()) do
+            local humanoid = obj:FindFirstChildOfClass("Humanoid")
+            if humanoid and obj:FindFirstChild("HumanoidRootPart") then
+                createOutlineESP(obj, outlineColor, fillColor)
+            end
+        end
+    end
+end
+
+local function highlightGenerators()
+    local generatorsFolder = workspace:FindFirstChild("Map") and 
+                             workspace.Map:FindFirstChild("Ingame") and 
+                             workspace.Map.Ingame:FindFirstChild("Map")
+
+    if generatorsFolder then
+        for _, obj in pairs(generatorsFolder:GetChildren()) do
+            if obj:IsA("Model") and obj.Name == "Generator" then
+                createOutlineESP(obj, Color3.new(1, 1, 0), Color3.new(1, 1, 0.5)) -- Yellow outline, light yellow fill
+            end
+        end
+    end
+end
+
+local function updateESP()
+    while true do
+        -- Clear existing highlights
+        for _, obj in pairs(Players:GetChildren()) do
+            if obj:IsA("Model") and obj:FindFirstChild("Humanoid") then
+                for _, highlight in pairs(obj:GetChildren()) do
+                    if highlight:IsA("Highlight") then
+                        highlight:Destroy()
+                    end
+                end
+            end
+        end
+
+        local killersGroup = Players:FindFirstChild("Killers")
+        if killersGroup then
+            createOutlineESPForGroup(killersGroup, Color3.new(1, 0, 0), Color3.new(1, 0.5, 0.5)) -- Red outline, light red fill
+            killersLabel.Text = "Killers: " .. #killersGroup:GetChildren()
+        else
+            killersLabel.Text = "Killers: 0"
+        end
+
+        local survivorsGroup = Players:FindFirstChild("Survivors")
+        if survivorsGroup then
+            createOutlineESPForGroup(survivorsGroup, Color3.new(0, 1, 0), Color3.new(0.5, 1, 0.5)) -- Green outline, light green fill
+            survivorsLabel.Text = "Survivors: " .. #survivorsGroup:GetChildren()
+        else
+            survivorsLabel.Text = "Survivors: 0"
+        end
+
+        highlightGenerators()
+
+        wait(5) 
+    end
+end
+
+updateESP()
+print(value)
+end)
+
+MiscCheats:CreateToggle("Auto Generator,Can't Work", function(value)
+                 -- auto_generator.lua
+-- Auto-generator script for Roblox game and Forsaken place
+-- Generates a JSON file with metadata and parameters about the game and place
+
+local json = require("dkjson")  -- JSON library, make sure dkjson.lua is available
+
+-- Function to get current UTC ISO8601 timestamp
+local function get_timestamp()
+    local utc_time = os.date("!%Y-%m-%dT%H:%M:%SZ")
+    return utc_time
+end
+
+-- Function to generate game data table
+local function generate_game_data(game_name, place_name)
+    local data = {
+        game = game_name,
+        place = place_name,
+        generated_at = get_timestamp(),
+        description = "Auto-generated data for " .. game_name .. " - " .. place_name,
+        parameters = {
+            difficulty = "medium",
+            max_players = 16,
+            version = "1.0.0"
+        },
+        features = {
+            "automatic map generation",
+            "dynamic weather",
+            "player stats tracking"
+        }
+    }
+    return data
+end
+
+-- Function to save data as JSON to a file
+local function save_to_file(data, filename)
+    local content = json.encode(data, { indent = true })
+    local file, err = io.open(filename, "w")
+    if not file then
+        print("Error opening file for writing: " .. err)
+        return false
+    end
+    file:write(content)
+    file:close()
+    print("Generated file saved as: " .. filename)
+    return true
+end
+
+-- Main execution
+local function main()
+    local game_name = "Roblox"
+    local place_name = "forsaken"
+    local generated_data = generate_game_data(game_name, place_name)
+    local output_file = string.format("%s_%s_generated.json", game_name:lower(), place_name:lower())
+
+    local success = save_to_file(generated_data, output_file)
+    if not success then
+        print("Failed to generate file.")
+    end
+end
+
+-- Run main function
+main()
+
+-- Note:
+-- This script depends on the 'dkjson' Lua module for JSON encoding.
+-- If dkjson is not available in your executor environment, you can get it from:
+-- https://github.com/LuaDist/dkjson/blob/master/dkjson.lua
+-- Place dkjson.lua in the same directory or your LUA_PATH.
+print(value)
+end)
